@@ -4,9 +4,11 @@ USAGE
 ---------------
 The following command (in run_ex.sh) is just an example, to compute the minimal distortion of the first 100 (-n) in anet_x.csv (--csvfile) for model anetx.h5 (--model_name) which must be stored in
 ./models. option target_type = 16 means untargeted attack.
-'''
+
+```
 python3 collect_gradients.py --csvfile anet_x.csv  --data mnist --model_name anetx --target_type 16 -n 100
 sleep 20
 python3 clever.py --stored_file anet_x.txt --untargeted ./lipschitz_mat/mnist_anetx/
-'''
+```
+
 Basically, the input images can be parametric without changing any code. But to support more models, please refer to "estimate_gradient_norm.py", the code is straightforward.
