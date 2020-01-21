@@ -16,6 +16,7 @@ import pickle
 import gzip
 import pickle
 import urllib.request
+import csv
 
 from tensorflow.contrib.keras.api.keras.models import Sequential
 from tensorflow.contrib.keras.api.keras.layers import Dense, Dropout, Activation, Flatten
@@ -62,33 +63,55 @@ def load_batch(fpath):
     return np.array(images),np.array(labels)
     
 
+def get_labels(x):
+    re = np.zeros(10)
+    re[x] = 1
+    return re
+
+def load_batch(fpath):
+    f = open(fpath,'r')
+    csvdata= csv.reader(f,delimiter=',')
+    i = []
+    l = []
+    for item in csvdata:
+        img = np.float64(item[1:len(item)])
+        i.append(img.reshape((32,32,3)))
+        l.append(get_labels(int(float(item[0]))))
+    return np.array(i),np.array(l)
+
+
 class CIFAR:
-    def __init__(self):
-        train_data = []
-        train_labels = []
+    def __init__(self, csvfile = 'resnet_x.csv'):
+        # train_data = []
+        # train_labels = []
         
-        if not os.path.exists("cifar-10-batches-bin"):
-            urllib.request.urlretrieve("https://www.cs.toronto.edu/~kriz/cifar-10-binary.tar.gz",
-                                       "cifar-data.tar.gz")
-            os.popen("tar -xzf cifar-data.tar.gz").read()
+        # if not os.path.exists("cifar-10-batches-bin"):
+        #     urllib.request.urlretrieve("https://www.cs.toronto.edu/~kriz/cifar-10-binary.tar.gz",
+        #                                "cifar-data.tar.gz")
+        #     os.popen("tar -xzf cifar-data.tar.gz").read()
             
 
-        for i in range(5):
-            r,s = load_batch("cifar-10-batches-bin/data_batch_"+str(i+1)+".bin")
-            train_data.extend(r)
-            train_labels.extend(s)
+        # for i in range(5):
+        #     r,s = load_batch("cifar-10-batches-bin/data_batch_"+str(i+1)+".bin")
+        #     train_data.extend(r)
+        #     train_labels.extend(s)
             
-        train_data = np.array(train_data,dtype=np.float32)
-        train_labels = np.array(train_labels)
+        # train_data = np.array(train_data,dtype=np.float32)
+        # train_labels = np.array(train_labels)
         
-        self.test_data, self.test_labels = load_batch("cifar-10-batches-bin/test_batch.bin")
+        # self.test_data, self.test_labels = load_batch("cifar-10-batches-bin/test_batch.bin")
+        # print(self.test_labels[0]);
         
-        VALIDATION_SIZE = 5000
+        # VALIDATION_SIZE = 5000
         
-        self.validation_data = train_data[:VALIDATION_SIZE, :, :, :]
-        self.validation_labels = train_labels[:VALIDATION_SIZE]
-        self.train_data = train_data[VALIDATION_SIZE:, :, :, :]
-        self.train_labels = train_labels[VALIDATION_SIZE:]
+        # self.validation_data = train_data[:VALIDATION_SIZE, :, :, :]
+        # self.validation_labels = train_labels[:VALIDATION_SIZE]
+        # self.train_data = train_data[VALIDATION_SIZE:, :, :, :]
+        # self.train_labels = train_labels[VALIDATION_SIZE:]
+        print('IIIIIIIIIIIIIIIIIIIIIIIII',csvfile)
+        self.train_data, self.train_labels = load_batch(csvfile)
+        self.test_data, self.test_labels = load_batch(csvfile)
+        self.validation_data, self.validation_labels = load_batch(csvfile)
 
 class CIFARModel:
     def __init__(self, restore=None, session=None, use_softmax=False, use_brelu = False, activation = "relu"):
@@ -160,6 +183,21 @@ class TwoLayerCIFARModel:
         if restore:
             model.load_weights(restore)
 
+        layer_outputs = []
+        for layer in model.layers:
+            if isinstance(layer, Conv2D) or isinstance(layer, Dense):
+                layer_outputs.append(K.function([model.layers[0].input], [layer.output]))
+
+        self.layer_outputs = layer_outputs
+        self.model = model
+
+class MYCIFARModel:
+    def __init__(self, restore = None, session=None, use_softmax=False):
+        self.num_channels = 3
+        self.image_size = 32
+        self.num_labels = 10
+
+        model = load_model(restore)
         layer_outputs = []
         for layer in model.layers:
             if isinstance(layer, Conv2D) or isinstance(layer, Dense):

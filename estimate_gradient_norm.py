@@ -58,8 +58,8 @@ class EstimateLipschitz(object):
         dataset: mnist, cifar and imagenet. recommend to use mnist and cifar as a starting point.
         model_name: possible options are 2-layer, distilled, and normal
         """
-        from setup_cifar import CIFAR, CIFARModel, TwoLayerCIFARModel
-        from setup_mnist import MNIST, MNISTModel, TwoLayerMNISTModel
+        from setup_cifar import CIFAR, CIFARModel, TwoLayerCIFARModel, MYCIFARModel
+        from setup_mnist import MNIST, MNISTModel, TwoLayerMNISTModel, MYMNISTModel
         from nlayer_model import NLayerModel
         from setup_imagenet import ImageNet, ImageNetModel
 
@@ -87,6 +87,30 @@ class EstimateLipschitz(object):
                     model =  MNISTModel("models/mnist_brelu", self.sess, not output_logits, use_brelu = True)
                 elif model_name == "distilled":
                     model =  MNISTModel("models/mnist-distilled-100", self.sess, not output_logits)
+                elif model_name == 'acnnx':
+                    model = MYMNISTModel('models/acnn.h5',self.sess,not output_logits)
+                elif model_name == 'acnnwrong':
+                    model = MYMNISTModel('models/acnnwrong.h5',self.sess,not output_logits)
+                elif model_name == 'acnnfgsm1':
+                    model = MYMNISTModel('models/acnnfgsm1.h5',self.sess,not output_logits)
+                elif model_name == 'acnnfgsm05':
+                    model = MYMNISTModel('models/acnnfgsm05.h5',self.sess,not output_logits)
+                elif model_name == 'acnncw':
+                    model = MYMNISTModel('models/acnncw.h5',self.sess,not output_logits)
+                elif model_name == 'acnnhop':
+                    model = MYMNISTModel('models/acnnhop.h5',self.sess,not output_logits)
+                elif model_name == 'anetx':
+                    model = MYMNISTModel('models/anet.h5',self.sess,not output_logits)
+                elif model_name == 'anetwrong':
+                    model = MYMNISTModel('models/anetwrong.h5',self.sess,not output_logits)
+                elif model_name == 'anetfgsm1':
+                    model = MYMNISTModel('models/anetfgsm1.h5',self.sess,not output_logits)
+                elif model_name == 'anetfgsm05':
+                    model = MYMNISTModel('models/anetfgsm05.h5',self.sess,not output_logits)
+                elif model_name == 'anetcw':
+                    model = MYMNISTModel('models/anetcw.h5',self.sess,not output_logits)
+                elif model_name == 'anethop':
+                    model = MYMNISTModel('models/anethop.h5',self.sess,not output_logits)
                 else:
                     # specify model parameters as N,M,opts
                     model_params = model_name.split(",")
@@ -110,6 +134,18 @@ class EstimateLipschitz(object):
                     model = CIFARModel("models/cifar_brelu", self.sess, not output_logits, use_brelu = True)
                 elif model_name == "distilled":
                     model = CIFARModel("models/cifar-distilled-100", self.sess, not output_logits)
+                elif model_name == 'resnet':
+                    model = MYCIFARModel('models/resnet.h5',self.sess,not output_logits)
+                elif model_name == 'reswrong':
+                    model = MYCIFARModel('models/reswrong.h5',self.sess,not output_logits)
+                elif model_name == 'resfgsm1':
+                    model = MYCIFARModel('models/resfgsm1.h5',self.sess,not output_logits)
+                elif model_name == 'resfgsm05':
+                    model = MYCIFARModel('models/resfgsm05.h5',self.sess,not output_logits)
+                elif model_name == 'rescw':
+                    model = MYCIFARModel('models/rescw.h5',self.sess,not output_logits)
+                elif model_name == 'reshop':
+                    model = MYCIFARModel('models/reshop.h5',self.sess,not output_logits)
                 else:
                     # specify model parameters as N,M,opts
                     model_params = model_name.split(",")
@@ -549,11 +585,11 @@ class EstimateLipschitz(object):
                 Gi_max[iters] = np.max(Gi)
                 
                 
-                if self.compute_slope:
-                    print('[STATS][L2] loop = {}, time = {:.5g}, iter_time = {:.5g}, overhead = {:.5g}, L2 = {:.5g}, L1 = {:.5g}, Linf = {:.5g}, G2 = {:.5g}, G1 = {:.5g}, Ginf = {:.5g}'.format(iters, time.time() - search_begin_time, time.time() - iter_begin_time, overhead_time, L2_max[iters], L1_max[iters], Li_max[iters], G2_max[iters], G1_max[iters], Gi_max[iters]))
-                else:
-                    print('[STATS][L2] loop = {}, time = {:.5g}, iter_time = {:.5g}, overhead = {:.5g}, G2 = {:.5g}, G1 = {:.5g}, Ginf = {:.5g}'.format(iters, time.time() - search_begin_time, time.time() - iter_begin_time, overhead_time, G2_max[iters], G1_max[iters], Gi_max[iters]))
-                sys.stdout.flush()
+                # if self.compute_slope:
+                #     print('[STATS][L2] loop = {}, time = {:.5g}, iter_time = {:.5g}, overhead = {:.5g}, L2 = {:.5g}, L1 = {:.5g}, Linf = {:.5g}, G2 = {:.5g}, G1 = {:.5g}, Ginf = {:.5g}'.format(iters, time.time() - search_begin_time, time.time() - iter_begin_time, overhead_time, L2_max[iters], L1_max[iters], Li_max[iters], G2_max[iters], G1_max[iters], Gi_max[iters]))
+                # else:
+                #     print('[STATS][L2] loop = {}, time = {:.5g}, iter_time = {:.5g}, overhead = {:.5g}, G2 = {:.5g}, G1 = {:.5g}, Ginf = {:.5g}'.format(iters, time.time() - search_begin_time, time.time() - iter_begin_time, overhead_time, G2_max[iters], G1_max[iters], Gi_max[iters]))
+                # sys.stdout.flush()
                 # reset per iteration L and G by filling 0
                 if self.compute_slope:
                     L2.fill(0)
@@ -569,18 +605,18 @@ class EstimateLipschitz(object):
                 idx_max = np.argmax(abs(H2))
                 H2_max[iters] = H2[idx_max]
 
-                print('[STATS][L2] loop = {}, time = {:.5g}, iter_time = {:.5g}, overhead = {:.5g}, H2 = {:.5g}'.format(iters, time.time() - search_begin_time, time.time() - iter_begin_time, overhead_time, H2_max[iters]))
+                #print('[STATS][L2] loop = {}, time = {:.5g}, iter_time = {:.5g}, overhead = {:.5g}, H2 = {:.5g}'.format(iters, time.time() - search_begin_time, time.time() - iter_begin_time, overhead_time, H2_max[iters]))
 
         if order == 1:
-            print('[STATS][L1] g_x0 = {:.5g}, L2_max = {:.5g}, L1_max = {:.5g}, Linf_max = {:.5g}, G2_max = {:.5g}, G1_max = {:.5g}, Ginf_max = {:.5g}'.format(
-                   g_x0, np.max(L2_max), np.max(L1_max), np.max(Li_max), np.max(G2_max), np.max(G1_max), np.max(Gi_max)))
-            # when compute the bound we need the DUAL norm
-            if self.compute_slope:
-                print('[STATS][L1] bnd_L2_max = {:.5g}, bnd_L1_max = {:.5g}, bnd_Linf_max = {:.5g}, bnd_G2_max = {:.5g}, bnd_G1_max = {:.5g}, bnd_Ginf_max = {:.5g}'.format(g_x0/np.max(L2_max), g_x0/np.max(Li_max), g_x0/np.max(L1_max), g_x0/np.max(G2_max), g_x0/np.max(Gi_max), g_x0/np.max(G1_max)))
-            else:
-                print('[STATS][L1] bnd_G2_max = {:.5g}, bnd_G1_max = {:.5g}, bnd_Ginf_max = {:.5g}'.format(g_x0/np.max(G2_max), g_x0/np.max(Gi_max), g_x0/np.max(G1_max)))
+        #     print('[STATS][L1] g_x0 = {:.5g}, L2_max = {:.5g}, L1_max = {:.5g}, Linf_max = {:.5g}, G2_max = {:.5g}, G1_max = {:.5g}, Ginf_max = {:.5g}'.format(
+        #            g_x0, np.max(L2_max), np.max(L1_max), np.max(Li_max), np.max(G2_max), np.max(G1_max), np.max(Gi_max)))
+        #     # when compute the bound we need the DUAL norm
+        #     if self.compute_slope:
+        #         print('[STATS][L1] bnd_L2_max = {:.5g}, bnd_L1_max = {:.5g}, bnd_Linf_max = {:.5g}, bnd_G2_max = {:.5g}, bnd_G1_max = {:.5g}, bnd_Ginf_max = {:.5g}'.format(g_x0/np.max(L2_max), g_x0/np.max(Li_max), g_x0/np.max(L1_max), g_x0/np.max(G2_max), g_x0/np.max(Gi_max), g_x0/np.max(G1_max)))
+        #     else:
+        #         print('[STATS][L1] bnd_G2_max = {:.5g}, bnd_G1_max = {:.5g}, bnd_Ginf_max = {:.5g}'.format(g_x0/np.max(G2_max), g_x0/np.max(Gi_max), g_x0/np.max(G1_max)))
             
-            sys.stdout.flush()
+            # sys.stdout.flush()
 
             # discard the last batch of samples
             sample_results.get()
@@ -593,11 +629,11 @@ class EstimateLipschitz(object):
             # find max abs(H2_max)
             H2_max_val = max(abs(H2_max))
 
-            print('[STATS][L1] g_x0 = {:.5g}, g_x0_grad_2_norm = {:.5g}, g_x0_grad_1_norm = {:.5g}, g_x0_grad_inf_norm = {:.5g}, H2_max = {:.5g}'.format(g_x0, g_x0_grad_2_norm, g_x0_grad_1_norm, g_x0_grad_inf_norm, H2_max_val))
+#            print('[STATS][L1] g_x0 = {:.5g}, g_x0_grad_2_norm = {:.5g}, g_x0_grad_1_norm = {:.5g}, g_x0_grad_inf_norm = {:.5g}, H2_max = {:.5g}'.format(g_x0, g_x0_grad_2_norm, g_x0_grad_1_norm, g_x0_grad_inf_norm, H2_max_val))
             
             bnd = (-g_x0_grad_2_norm + np.sqrt(g_x0_grad_2_norm**2+2*g_x0*H2_max_val))/H2_max_val
-            print('[STATS][L1] bnd_H2_max = {:.5g}'.format(bnd))
-            sys.stdout.flush()
+#            print('[STATS][L1] bnd_H2_max = {:.5g}'.format(bnd))
+ #           sys.stdout.flush()
 
             sample_results.get()
             return [H2_max, g_x0, g_x0_grad_2_norm, g_x0_grad_1_norm, g_x0_grad_inf_norm, pred]

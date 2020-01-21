@@ -1,0 +1,21 @@
+python3 collect_gradients.py --csvfile resnet_wrong.csv  --data cifar --model_name reswrong --target_type 16 -n 1
+sleep 7
+python3 clever.py --stored_file result_x.txt --untargeted ./lipschitz_mat/cifar_reswrong/
+sleep 7
+python3 collect_gradients.py --csvfile resnet_fgsm1.csv  --data cifar --model_name resfgsm1 --target_type 16 -n 1
+sleep 7
+python3 clever.py --stored_file result_x.txt --untargeted ./lipschitz_mat/cifar_resfgsm1/
+sleep 7
+python3 collect_gradients.py --csvfile resnet_fgsm05.csv  --data cifar --model_name resfgsm05 --target_type 16 -n 1
+sleep 7
+python3 clever.py --stored_file result_x.txt --untargeted ./lipschitz_mat/cifar_resfgsm05/
+sleep 7
+python3 collect_gradients.py --csvfile resnet_cw.csv  --data cifar --model_name rescw --target_type 16 -n 1
+sleep 7
+python3 clever.py --stored_file result_x.txt --untargeted ./lipschitz_mat/cifar_rescw/
+sleep 7
+python3 collect_gradients.py --csvfile resnet_hop.csv  --data cifar --model_name reshop --target_type 16 -n 1
+sleep 7
+python3 clever.py --stored_file result_x.txt --untargeted ./lipschitz_mat/cifar_reshop/
+
+

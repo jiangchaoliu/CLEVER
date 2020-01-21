@@ -89,12 +89,12 @@ def get_best_weibull_fit(sample, use_reg = False, shape_reg = 0.01):
     shape_rescale = dist_range
     # else:
     #     shape_rescale = 1.0
-    print("shape rescale = {}".format(shape_rescale))
+    #print("shape rescale = {}".format(shape_rescale))
     rescaled_sample = np.copy(sample)
     rescaled_sample -= loc_shift
     rescaled_sample /= shape_rescale
 
-    print("loc_shift = {}".format(loc_shift))
+    #print("loc_shift = {}".format(loc_shift))
     ##print("rescaled_sample = {}".format(rescaled_sample))
 
     # fit weibull distn: sample follows reverse weibull dist, so -sample follows weibull distribution
@@ -109,7 +109,7 @@ def get_best_weibull_fit(sample, use_reg = False, shape_reg = 0.01):
         scale = res[2]
         ks = res[3]
         pVal = res[4]
-        print("[DEBUG][L2] c_init = {:5.5g}, fitted c = {:6.2f}, loc = {:7.2f}, scale = {:7.2f}, ks = {:4.2f}, pVal = {:4.2f}, max = {:7.2f}".format(c_i,c,loc,scale,ks,pVal,loc_shift))
+        #print("[DEBUG][L2] c_init = {:5.5g}, fitted c = {:6.2f}, loc = {:7.2f}, scale = {:7.2f}, ks = {:4.2f}, pVal = {:4.2f}, max = {:7.2f}".format(c_i,c,loc,scale,ks,pVal,loc_shift))
         
         ## plot every fitted result
         #plot_weibull(sample,c,loc,scale,ks,pVal,p)
@@ -124,7 +124,7 @@ def get_best_weibull_fit(sample, use_reg = False, shape_reg = 0.01):
     # get the paras of best pVal among c_init
     max_pVal = np.nanmax(fitted_paras['pVal'])
     if np.isnan(max_pVal) or max_pVal < 0.001:
-        print("ill-conditioned samples. Using maximum sample value.")
+        #print("ill-conditioned samples. Using maximum sample value.")
         # handle the ill conditioned case
         return -1, -1, -max(sample), -1, -1, -1
 
@@ -173,6 +173,7 @@ def parse_filename(filename):
     basename = os.path.basename(filename)
     name, _ = os.path.splitext(basename)
     name_arr = name.split('_')
+    print(name_arr)
     Nsamp = int(name_arr[0])
     Niters = int(name_arr[1])
     true_id = int(name_arr[2])
@@ -208,6 +209,10 @@ if __name__ == "__main__":
                 type=int,
                 default=0,
                 help='number of images to use, 0 to use all images')
+    parser.add_argument('--stored_file',
+                type=str,
+                default=None,
+                help='number of images to use, 0 to use all images')
     parser.add_argument('--shape_reg',
                 default=0.01,
                 type=float,
@@ -239,7 +244,7 @@ if __name__ == "__main__":
     plot_res = None
 
     # get a list of all '.mat' files in folder
-    file_list = glob.glob(args['data_folder'] + '/**/*.mat', recursive = True)
+    file_list = glob.glob(args['data_folder'] + '/*', recursive = True)
     # sort by image ID, then by information (least likely, random, top-2)
     file_list = sorted(file_list, key = lambda x: (parse_filename(x)[2], parse_filename(x)[5]))
     # get the first num_images files
@@ -255,14 +260,15 @@ if __name__ == "__main__":
         bounds = {"least" : [[], [], []],
                   "random": [[], [], []],
                   "top2"  : [[], [], []]}
-
+    #print(file_list)
     for fname in file_list:
+        #print(fname)
         nsamps, niters, true_id, true_label, target_label, img_info, activation, order = parse_filename(fname)
 
         # keys in mat:
         # ['Li_max', 'pred', 'G1_max', 'g_x0', 'path', 'info', 'G2_max', 'true_label', 'args', 'L1_max', 'Gi_max', 'L2_max', 'id', 'target_label']
         mat = sio.loadmat(fname)
-        print('loading {}'.format(fname))
+        #print('loading {}'.format(fname))
         
         if order == "1" and args['use_slope']:
             G1_max = np.squeeze(mat['L1_max'])
@@ -306,7 +312,7 @@ if __name__ == "__main__":
             img_info = args['user_type']
         
         # get the filename (.mat)
-        print('[Filename] {}'.format(fname))       
+        #print('[Filename] {}'.format(fname))       
         # get the model name (inception, cifar_2-layer)
         possible_names = ["mnist", "cifar", "mobilenet", "inception", "resnet"]
         model = "unknown"
@@ -363,14 +369,14 @@ if __name__ == "__main__":
         elif args['method'] == "mle_reg":
             
             if order == "1":
-                print('estimating L1...')
+                #print('estimating L1...')
                 Est_G1 = get_lipschitz_estimate(G1_max, "L1", figname, True, args['shape_reg'])
-                print('estimating L2...')
+                #print('estimating L2...')
                 Est_G2 = get_lipschitz_estimate(G2_max, "L2", figname, True, args['shape_reg'])
-                print('estimating Li...')
+                #print('estimating Li...')
                 Est_Gi = get_lipschitz_estimate(Gi_max, "Li", figname, True, args['shape_reg'])
             else: # currently only compare bounds in L2 for both order = 1 and order = 2
-                print('estimating L2...')
+                #print('estimating L2...')
                 Est_G2 = get_lipschitz_estimate(G2_max, "L2", figname, True, args['shape_reg'])
                 Est_G1 = Est_G2
                 Est_Gi = Est_G1
@@ -441,28 +447,28 @@ if __name__ == "__main__":
         #print('g_x0 = '+str(g_x0))
         
         
-        if args['method'] == "maxsamp":
-            if order == "1":
-                print('[DEBUG][L1] id = {}, true_label = {}, target_label = {}, info = {}, nsamps = {}, niters = {}, bnd_norm = {}, bnd = {:.5g}'.format(true_id, true_label, target_label, img_info, nsamps, niters, bndnorm_L1, bnd_L1))
-                print('[DEBUG][L1] id = {}, true_label = {}, target_label = {}, info = {}, nsamps = {}, niters = {}, bnd_norm = {}, bnd = {:.5g}'.format(true_id, true_label, target_label, img_info, nsamps, niters, bndnorm_L2, bnd_L2))
-                print('[DEBUG][L1] id = {}, true_label = {}, target_label = {}, info = {}, nsamps = {}, niters = {}, bnd_norm = {}, bnd = {:.5g}'.format(true_id, true_label, target_label, img_info, nsamps, niters, bndnorm_Li, bnd_Li))
-            else: # currently only compare L2 bound
-                print('[DEBUG][L1] id = {}, true_label = {}, target_label = {}, info = {}, nsamps = {}, niters = {}, bnd_norm = {}, bnd = {:.5g}'.format(true_id, true_label, target_label, img_info, nsamps, niters, bndnorm_L2, bnd_L2))
+        # if args['method'] == "maxsamp":
+        #     if order == "1":
+        #         print('[DEBUG][L1] id = {}, true_label = {}, target_label = {}, info = {}, nsamps = {}, niters = {}, bnd_norm = {}, bnd = {:.5g}'.format(true_id, true_label, target_label, img_info, nsamps, niters, bndnorm_L1, bnd_L1))
+        #         print('[DEBUG][L1] id = {}, true_label = {}, target_label = {}, info = {}, nsamps = {}, niters = {}, bnd_norm = {}, bnd = {:.5g}'.format(true_id, true_label, target_label, img_info, nsamps, niters, bndnorm_L2, bnd_L2))
+        #         print('[DEBUG][L1] id = {}, true_label = {}, target_label = {}, info = {}, nsamps = {}, niters = {}, bnd_norm = {}, bnd = {:.5g}'.format(true_id, true_label, target_label, img_info, nsamps, niters, bndnorm_Li, bnd_Li))
+        #     else: # currently only compare L2 bound
+        #         print('[DEBUG][L1] id = {}, true_label = {}, target_label = {}, info = {}, nsamps = {}, niters = {}, bnd_norm = {}, bnd = {:.5g}'.format(true_id, true_label, target_label, img_info, nsamps, niters, bndnorm_L2, bnd_L2))
         
-        elif args['method'] == "mle" or args['method'] == "mle_reg":
-            if order == "1":
-                # estimate Lipschitz constant: Est_G1 is a dictionary containing Lips_est and weibull paras        
-                # current debug mode: bound_L1 corresponds to Gi, bound_L2 corresponds to G2, bound_Li corresponds to G1
-                print('[DEBUG][L1] id = {}, true_label = {}, target_label = {}, info = {}, nsamps = {}, niters = {}, bnd_norm = {}, bnd = {:.5g}, ks = {:.5g}, pVal = {:.5g}, shape = {:.5g}, loc = {:.5g}, scale = {:.5g}, g_x0 = {}'.format(true_id, true_label, target_label, img_info, nsamps, niters, bndnorm_L1, bnd_L1, ks_Gi, pVal_Gi, shape_Gi, loc_Gi, scale_Gi, g_x0))
-                print('[DEBUG][L1] id = {}, true_label = {}, target_label = {}, info = {}, nsamps = {}, niters = {}, bnd_norm = {}, bnd = {:.5g}, ks = {:.5g}, pVal = {:.5g}, shape = {:.5g}, loc = {:.5g}, scale = {:.5g}, g_x0 = {}'.format(true_id, true_label, target_label, img_info, nsamps, niters, bndnorm_L2, bnd_L2, ks_G2, pVal_G2, shape_G2, loc_G2, scale_G2, g_x0))
-                print('[DEBUG][L1] id = {}, true_label = {}, target_label = {}, info = {}, nsamps = {}, niters = {}, bnd_norm = {}, bnd = {:.5g}, ks = {:.5g}, pVal = {:.5g}, shape = {:.5g}, loc = {:.5g}, scale = {:.5g}, g_x0 = {}'.format(true_id, true_label, target_label, img_info, nsamps, niters, bndnorm_Li, bnd_Li, ks_G1, pVal_G1, shape_G1, loc_G1, scale_G1, g_x0))      
-            else: # currently only compare L2 bound
-                print('[DEBUG][L1] id = {}, true_label = {}, target_label = {}, info = {}, nsamps = {}, niters = {}, bnd_norm = {}, bnd = {:.5g}, ks = {:.5g}, pVal = {:.5g}, shape = {:.5g}, loc = {:.5g}, scale = {:.5g}, g_x0 = {}'.format(true_id, true_label, target_label, img_info, nsamps, niters, bndnorm_L2, bnd_L2, ks_G2, pVal_G2, shape_G2, loc_G2, scale_G2, g_x0))
+        # elif args['method'] == "mle" or args['method'] == "mle_reg":
+        #     if order == "1":
+        #         # estimate Lipschitz constant: Est_G1 is a dictionary containing Lips_est and weibull paras        
+        #         # current debug mode: bound_L1 corresponds to Gi, bound_L2 corresponds to G2, bound_Li corresponds to G1
+        #         print('[DEBUG][L1] id = {}, true_label = {}, target_label = {}, info = {}, nsamps = {}, niters = {}, bnd_norm = {}, bnd = {:.5g}, ks = {:.5g}, pVal = {:.5g}, shape = {:.5g}, loc = {:.5g}, scale = {:.5g}, g_x0 = {}'.format(true_id, true_label, target_label, img_info, nsamps, niters, bndnorm_L1, bnd_L1, ks_Gi, pVal_Gi, shape_Gi, loc_Gi, scale_Gi, g_x0))
+        #         print('[DEBUG][L1] id = {}, true_label = {}, target_label = {}, info = {}, nsamps = {}, niters = {}, bnd_norm = {}, bnd = {:.5g}, ks = {:.5g}, pVal = {:.5g}, shape = {:.5g}, loc = {:.5g}, scale = {:.5g}, g_x0 = {}'.format(true_id, true_label, target_label, img_info, nsamps, niters, bndnorm_L2, bnd_L2, ks_G2, pVal_G2, shape_G2, loc_G2, scale_G2, g_x0))
+        #         print('[DEBUG][L1] id = {}, true_label = {}, target_label = {}, info = {}, nsamps = {}, niters = {}, bnd_norm = {}, bnd = {:.5g}, ks = {:.5g}, pVal = {:.5g}, shape = {:.5g}, loc = {:.5g}, scale = {:.5g}, g_x0 = {}'.format(true_id, true_label, target_label, img_info, nsamps, niters, bndnorm_Li, bnd_Li, ks_G1, pVal_G1, shape_G1, loc_G1, scale_G1, g_x0))      
+        #     else: # currently only compare L2 bound
+        #         print('[DEBUG][L1] id = {}, true_label = {}, target_label = {}, info = {}, nsamps = {}, niters = {}, bnd_norm = {}, bnd = {:.5g}, ks = {:.5g}, pVal = {:.5g}, shape = {:.5g}, loc = {:.5g}, scale = {:.5g}, g_x0 = {}'.format(true_id, true_label, target_label, img_info, nsamps, niters, bndnorm_L2, bnd_L2, ks_G2, pVal_G2, shape_G2, loc_G2, scale_G2, g_x0))
 
-        else:
-            raise RuntimeError("method not supported")
+        # else:
+        #     raise RuntimeError("method not supported")
         
-        sys.stdout.flush()
+        # sys.stdout.flush()
         
     if args['untargeted']:
         clever_L1s = []
@@ -480,6 +486,12 @@ if __name__ == "__main__":
             clever_L2s.append(img_clever_L2)
             clever_Lis.append(img_clever_Li)
         info = "untargeted"
+        if args['stored_file'] != None:
+            f = open(args['stored_file'],'a')
+            for i in range(len(clever_Lis)): 
+                f.write(str(clever_L1s[i])+' '+str(clever_L2s[i])+' '+str(clever_Lis[i])+'\n')
+            f.close()
+            
         clever_L1 = reduce_op(clever_L1s)
         clever_L2 = reduce_op(clever_L2s)
         clever_Li = reduce_op(clever_Lis)
