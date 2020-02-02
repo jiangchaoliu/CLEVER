@@ -81,7 +81,7 @@ def load_batch(fpath):
 
 
 class CIFAR:
-    def __init__(self, csvfile = 'resnet_x.csv'):
+    def __init__(self, csvfile):
         # train_data = []
         # train_labels = []
         

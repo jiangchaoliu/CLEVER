@@ -58,7 +58,7 @@ def load_batch(fpath):
     return np.array(i),np.array(l)
 
 class MNIST:
-    def __init__(self,csvfile = 'acnn_x.csv'):
+    def __init__(self,csvfile):
         # if not os.path.exists("data"):
         #     os.mkdir("data")
         #     files = ["train-images-idx3-ubyte.gz",
