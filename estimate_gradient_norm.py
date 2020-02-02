@@ -110,7 +110,7 @@ class EstimateLipschitz(object):
                 elif model_name == 'rfnn_cw':
                     model = MYMNISTModel('models/rfnn3t30_1.h5',self.sess,not output_logits)
                 elif model_name == 'rfnn_hop':
-                    model = MYMNISTModel('models/anethop.h5',self.sess,not output_logits)
+                    model = MYMNISTModel('models/rfnn3t30_1.h5',self.sess,not output_logits)
                 else:
                     # specify model parameters as N,M,opts
                     model_params = model_name.split(",")
