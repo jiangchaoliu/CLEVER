@@ -87,29 +87,29 @@ class EstimateLipschitz(object):
                     model =  MNISTModel("models/mnist_brelu", self.sess, not output_logits, use_brelu = True)
                 elif model_name == "distilled":
                     model =  MNISTModel("models/mnist-distilled-100", self.sess, not output_logits)
-                elif model_name == 'acnnx':
-                    model = MYMNISTModel('models/acnn.h5',self.sess,not output_logits)
-                elif model_name == 'acnnwrong':
-                    model = MYMNISTModel('models/acnnwrong.h5',self.sess,not output_logits)
-                elif model_name == 'acnnfgsm1':
-                    model = MYMNISTModel('models/acnnfgsm1.h5',self.sess,not output_logits)
-                elif model_name == 'acnnfgsm05':
-                    model = MYMNISTModel('models/acnnfgsm05.h5',self.sess,not output_logits)
-                elif model_name == 'acnncw':
-                    model = MYMNISTModel('models/acnncw.h5',self.sess,not output_logits)
-                elif model_name == 'acnnhop':
-                    model = MYMNISTModel('models/acnnhop.h5',self.sess,not output_logits)
-                elif model_name == 'anetx':
-                    model = MYMNISTModel('models/anet.h5',self.sess,not output_logits)
-                elif model_name == 'anetwrong':
-                    model = MYMNISTModel('models/anetwrong.h5',self.sess,not output_logits)
-                elif model_name == 'anetfgsm1':
-                    model = MYMNISTModel('models/anetfgsm1.h5',self.sess,not output_logits)
-                elif model_name == 'anetfgsm05':
-                    model = MYMNISTModel('models/anetfgsm05.h5',self.sess,not output_logits)
-                elif model_name == 'anetcw':
-                    model = MYMNISTModel('models/anetcw.h5',self.sess,not output_logits)
-                elif model_name == 'anethop':
+                elif model_name == 'rcnn_valid':
+                    model = MYMNISTModel('models/rcnn6t16_1.h5',self.sess,not output_logits)
+                elif model_name == 'rcnn_wrong':
+                    model = MYMNISTModel('models/rcnn6t16_1.h5',self.sess,not output_logits)
+                elif model_name == 'rcnn_fgsm1':
+                    model = MYMNISTModel('models/rcnn6t16_1.h5',self.sess,not output_logits)
+                elif model_name == 'rcnn_fgsm05':
+                    model = MYMNISTModel('models/rcnn6t16_1.h5',self.sess,not output_logits)
+                elif model_name == 'rcnn_cw':
+                    model = MYMNISTModel('models/rcnn6t16_1.h5',self.sess,not output_logits)
+                elif model_name == 'rcnn_hop':
+                    model = MYMNISTModel('models/rcnn6t16_1.h5',self.sess,not output_logits)
+                elif model_name == 'rfnn_valid':
+                    model = MYMNISTModel('models/rfnn3t30_1.h5',self.sess,not output_logits)
+                elif model_name == 'rfnn_wrong':
+                    model = MYMNISTModel('models/rfnn3t30_1.h5',self.sess,not output_logits)
+                elif model_name == 'rfnn_fgsm1':
+                    model = MYMNISTModel('models/rfnn3t30_1.h5',self.sess,not output_logits)
+                elif model_name == 'rfnn_fgsm05':
+                    model = MYMNISTModel('models/rfnn3t30_1.h5',self.sess,not output_logits)
+                elif model_name == 'rfnn_cw':
+                    model = MYMNISTModel('models/rfnn3t30_1.h5',self.sess,not output_logits)
+                elif model_name == 'rfnn_hop':
                     model = MYMNISTModel('models/anethop.h5',self.sess,not output_logits)
                 else:
                     # specify model parameters as N,M,opts
@@ -134,18 +134,6 @@ class EstimateLipschitz(object):
                     model = CIFARModel("models/cifar_brelu", self.sess, not output_logits, use_brelu = True)
                 elif model_name == "distilled":
                     model = CIFARModel("models/cifar-distilled-100", self.sess, not output_logits)
-                elif model_name == 'resnet':
-                    model = MYCIFARModel('models/resnet.h5',self.sess,not output_logits)
-                elif model_name == 'reswrong':
-                    model = MYCIFARModel('models/reswrong.h5',self.sess,not output_logits)
-                elif model_name == 'resfgsm1':
-                    model = MYCIFARModel('models/resfgsm1.h5',self.sess,not output_logits)
-                elif model_name == 'resfgsm05':
-                    model = MYCIFARModel('models/resfgsm05.h5',self.sess,not output_logits)
-                elif model_name == 'rescw':
-                    model = MYCIFARModel('models/rescw.h5',self.sess,not output_logits)
-                elif model_name == 'reshop':
-                    model = MYCIFARModel('models/reshop.h5',self.sess,not output_logits)
                 else:
                     # specify model parameters as N,M,opts
                     model_params = model_name.split(",")
